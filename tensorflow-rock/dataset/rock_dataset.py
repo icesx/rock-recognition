@@ -13,7 +13,7 @@ class RockDataset:
         return self.__create_dataset(root)
 
     def __load_and_preprocess_from_path_label(self, path, lable):
-        images = load_image(path, self.image_x, self.image_y)
+        images = image_byte_array(path, self.image_x, self.image_y)
         return normal_image(images), lable
 
     def __create_dataset(self, data_root_orig):
@@ -22,7 +22,7 @@ class RockDataset:
         ds = ds.map(self.__load_and_preprocess_from_path_label)
         ds = ds.cache()
         ds = ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
-        return ds.batch(8)
+        return ds.batch(10)
 
 
 if __name__ == '__main__':
