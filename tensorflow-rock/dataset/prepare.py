@@ -16,11 +16,10 @@ def group_image(root_dir):
     dfg = df.groupby("lables")
     df_sum = dict(dfg["count"].sum())
     print(df_sum)
-    df_result = {(k,v) for k, v in df_sum.items() if v > 20}
-    for (k,v) in df_result:
-        print(k,v)
-        shutil.copytree(k,dst="/WORK/datasset/rock_imgs_train/"+k.split("/")[4])
-
+    df_result = {(k, v) for k, v in df_sum.items() if v > 20}
+    for (k, v) in df_result:
+        print(k, v)
+        shutil.copytree(k, dst="/WORK/datasset/rock_imgs_train/" + k.split("/")[4])
 
 
 if __name__ == '__main__':

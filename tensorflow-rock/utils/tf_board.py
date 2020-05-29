@@ -8,4 +8,4 @@ import tensorflow as tf
 
 def tf_board():
     log_dir = "../tmp/logs/tb/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    return tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+    return tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1, profile_batch=0)

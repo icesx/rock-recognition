@@ -43,6 +43,5 @@ class Rock:
 
 if __name__ == '__main__':
     from utils.gpu import gpu_init
-
     gpu_init(6000)
     Rock().load().train().save()
