@@ -25,20 +25,20 @@ class Rock:
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.Flatten(),
             keras.layers.Dense(64, activation="relu"),
-            keras.layers.Dense(184)
+            keras.layers.Dense(167)
         ])
         self.model.compile(optimizer="adam",
                            loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                            metrics=["accuracy"])
         self.model.summary()
         self.model.fit(self.ds,
-                       epochs=200,
+                       epochs=300,
                        steps_per_epoch=250,
                        callbacks=[tf_board()])
         return self
 
     def save(self):
-        tf.saved_model.save(self.model, export_dir="../tmp/save/rock")
+        tf.saved_model.save(self.model, export_dir="../save/rock")
 
 
 if __name__ == '__main__':

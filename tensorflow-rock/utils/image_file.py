@@ -5,6 +5,7 @@
 import pathlib
 import random
 import tensorflow as tf
+import numpy as np
 
 
 def image_paths(root_path):
@@ -36,16 +37,12 @@ def image_labels(root):
 
 def images_byte_array(root_path, image_x, image_y):
     all_image_paths = image_paths(pathlib.Path(root_path))
-    return list(map(lambda path: image_byte_array(path, image_x, image_y), all_image_paths))
+    return np.array([image_byte_array(path, image_x, image_y) for path in  all_image_paths])
 
 
 def image_byte_array(path, image_x, image_y):
     image = tf.io.read_file(path)
     image = tf.image.decode_jpeg(image, channels=3)
     image = tf.image.resize(image, [image_x, image_y])
-    return image
-
-
-def normal_image(image):
     image /= 255.0
     return image

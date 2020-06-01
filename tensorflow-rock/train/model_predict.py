@@ -7,6 +7,7 @@ from tensorflow import keras
 import tensorflow as tf
 import numpy as np
 from utils.image_file import *
+from utils.plot import *
 
 
 def load_model(export_dir):
@@ -17,7 +18,9 @@ def load_model(export_dir):
 if __name__ == '__main__':
     model = load_model("../tmp/save/rock")
     print(model)
-    test_images = normal_image(image_byte_array("/WORK/datasset/rock_imgs_test", 128, 128))
-    predicted = model.predict(test_images)
-    for i in predicted:
-        print(i)
+    test_images = images_byte_array("/WORK/datasset/rock_imgs_test", 128, 128)
+    print("test images:",test_images[:10])
+    # plot_show(test_images)
+    # predicted = model.predict(test_images)
+    # for i in predicted:
+    #     print(i)

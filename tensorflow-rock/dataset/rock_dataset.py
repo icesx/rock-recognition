@@ -2,6 +2,7 @@ import tensorflow as tf
 import pathlib
 import random
 from utils.image_file import *
+from utils.plot import *
 
 
 class RockDataset:
@@ -14,7 +15,7 @@ class RockDataset:
 
     def __load_and_preprocess_from_path_label(self, path, lable):
         images = image_byte_array(path, self.image_x, self.image_y)
-        return normal_image(images), lable
+        return images, lable
 
     def __create_dataset(self, data_root_orig):
         all_image_paths, all_image_labels = image_labels(data_root_orig)
@@ -22,7 +23,7 @@ class RockDataset:
         ds = ds.map(self.__load_and_preprocess_from_path_label)
         ds = ds.cache()
         ds = ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
-        return ds.batch(10)
+        return ds.batch(15)
 
 
 if __name__ == '__main__':
