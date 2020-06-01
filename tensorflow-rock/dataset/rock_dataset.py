@@ -3,6 +3,7 @@ import pathlib
 import random
 from utils.image_file import *
 from utils.plot import *
+from utils.my_file import file_resave
 
 
 class RockDataset:
@@ -10,24 +11,23 @@ class RockDataset:
         self.image_x = image_x
         self.image_y = image_y
 
-    def load(self, root):
-        return self.__create_dataset(root)
+    def load(self, root, batch):
+        return self.__create_dataset(root, batch)
 
     def __load_and_preprocess_from_path_label(self, path, lable):
         images = image_byte_array(path, self.image_x, self.image_y)
         return images, lable
 
-    def __create_dataset(self, data_root_orig):
-        all_image_paths, all_image_labels = image_labels(data_root_orig)
-        ds = tf.data.Dataset.from_tensor_slices((all_image_paths, all_image_labels))
+    def __create_dataset(self, root, batch):
+        image_label=image_labels(root)
+        ds = tf.data.Dataset.from_tensor_slices((image_label.paths, image_label.label_idx))
         ds = ds.map(self.__load_and_preprocess_from_path_label)
         ds = ds.cache()
         ds = ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
-        return ds.batch(15)
+        return ds.batch(batch), image_label
 
 
 if __name__ == '__main__':
-    rd = RockDataset()
-    ds = rd.load()
+    ds = RockDataset().load('/WORK/datasset/rock_imgs_train2', 15)
     for element in ds:
         print(element)

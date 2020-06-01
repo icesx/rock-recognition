@@ -2,6 +2,7 @@ import tensorflow as tf
 from dataset.rock_dataset import RockDataset
 from tensorflow import keras
 from utils.tf_board import tf_board
+from utils.my_file import file_resave
 
 image_x = 128
 image_y = 128
@@ -11,9 +12,12 @@ class Rock:
     def __init__(self):
         self.model = None
         self.ds = None
+        self.label_file = "../save/lables.json"
 
     def load(self):
-        self.ds = RockDataset(image_x, image_y).load('/WORK/datasset/rock_imgs_train2')
+        self.ds, image_label = RockDataset(image_x=image_x, image_y=image_y).load(
+            '/WORK/datasset/rock_imgs_train2', batch=15)
+        file_resave(self.label_file, str(image_label.label_name_idx))
         return self
 
     def train(self):
@@ -43,5 +47,6 @@ class Rock:
 
 if __name__ == '__main__':
     from utils.gpu import gpu_init
+
     gpu_init(6000)
     Rock().load().train().save()
