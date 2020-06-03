@@ -2,7 +2,11 @@
 # Copyright (C)
 # Author: I
 # Contact: 12157724@qq.com
+<<<<<<< HEAD
 from dataset.image_file import *
+=======
+from utils.image_file import *
+>>>>>>> c35f7f48f7b3e88259866ff6f548f1ab53f7cbe3
 import unittest
 
 
