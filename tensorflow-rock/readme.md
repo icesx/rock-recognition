@@ -9,7 +9,6 @@ tensorflow卷积网络训练的石头识别的模型
 ```python
 python3 test/test_split_dataset.py
 ```
-
 ### tensorboard
 ```
 python3 -m tensorboard.main --logdir=./tmp/logs/tb/
