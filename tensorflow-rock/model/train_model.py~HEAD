@@ -4,10 +4,10 @@
 # Contact: 12157724@qq.com
 
 import tensorflow as tf
-from dataset.rock_dataset import RockDataset
+from dataset.create_dataset import DatasetCreator
 from tensorflow import keras
 
-from utils.my_file import file_resave
+from utils.my_file import over_write
 from utils.tf_board import tf_board
 
 
@@ -23,9 +23,9 @@ class BaseModelOperate:
         self.__image_root = image_root
 
     def load(self, batch=10):
-        self.__ds, image_label = RockDataset(image_x=self.__image_x, image_y=self.__image_y).load(
+        self.__ds, image_label = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y).load(
             self.__image_root).repeat().batch(batch)
-        file_resave(self.__label_file, str(image_label.label_name_idx))
+        over_write(self.__label_file, str(image_label.label_name_idx))
         return self
 
     def _create(self, image_x, image_y):
@@ -63,6 +63,8 @@ class RockModel(BaseModelOperate):
     def _create(self, image_x, image_y):
         model = keras.Sequential([
             keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),

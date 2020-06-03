@@ -26,11 +26,21 @@ class DatasetCreator:
         return images, lable
 
     def __create_dataset(self, root):
+<<<<<<< HEAD
         image_label = image_labels(root)
         self.image_label = image_label
         ds = tf.data.Dataset.from_tensor_slices((image_label.paths, image_label.label_idx))
         self.ds = ds.map(self.__load_and_preprocess_from_path_label)
         # self.ds = ds.cache()
+=======
+        image_infos = image_labels(root)
+        path_ds = tf.data.Dataset.from_tensor_slices([ii.path_str for ii in image_infos])
+        image_ds = path_ds.map(self.__load_and_preprocess_from_path_label)
+        label_ds = tf.data.Dataset.from_tensor_slices(
+            tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
+        self.ds = tf.data.Dataset.zip((image_ds, label_ds))
+        self.ds = self.ds.cache()
+>>>>>>> 02a37b7... class image_info ok
         return self
 
 

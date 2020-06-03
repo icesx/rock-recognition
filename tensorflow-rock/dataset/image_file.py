@@ -25,12 +25,25 @@ class ImageLabels:
         return self.__label_idx
 
     @property
+<<<<<<< HEAD
     def label_name(self):
         return self.__label_name
 
     @property
     def label_name_idx(self):
         return self.__label_name_idx
+=======
+    def path_str(self):
+        return str(self.__path)
+
+    @property
+    def path(self):
+        return self.__path
+
+    @property
+    def label_info(self):
+        return self.__label
+>>>>>>> 02a37b7... class image_info ok
 
     @property
     def idx_name_label(self):
@@ -39,6 +52,7 @@ class ImageLabels:
 
 def image_paths(root_path):
     root_path = pathlib.Path(root_path)
+<<<<<<< HEAD
     all_image_paths = list(root_path.glob('*/*'))
     all_image_paths = [str(path) for path in all_image_paths]
     random.shuffle(all_image_paths)
@@ -52,6 +66,13 @@ def image_label_index(root_path):
     label_to_index = dict((name, index) for index, name in enumerate(label_names))
     print('label_to_index: ', label_to_index)
     return label_to_index, label_names
+=======
+    images = sorted(list(root_path.glob('*/*')))
+    image_infos = [ImageInfo(path) for path in images]
+    random.shuffle(image_infos)
+    print("First 10 image_infos: ", image_infos[:10])
+    return image_infos
+>>>>>>> 02a37b7... class image_info ok
 
 
 def image_labels(root: object) -> ImageLabels:
@@ -64,11 +85,14 @@ def image_labels(root: object) -> ImageLabels:
     return ImageLabels(all_image_paths, all_image_labels_id, lable_names, label_name_to_index)
 
 
+<<<<<<< HEAD
 def images_byte_array(root_path, image_x, image_y):
     all_image_paths, all_image_labels, label_to_index = image_labels(pathlib.Path(root_path))
     return np.array([image_byte_array(path, image_x, image_y) for path in all_image_paths]), np.array(all_image_labels)
 
 
+=======
+>>>>>>> 02a37b7... class image_info ok
 def image_byte_array(path, image_x, image_y):
     print(path)
     image = tf.io.read_file(path)

@@ -5,7 +5,7 @@
 
 from tensorflow import keras
 from dataset.image_file import *
-from dataset.rock_dataset import RockDataset
+from dataset.create_dataset import DatasetCreator
 
 
 def load_model(export_dir):
@@ -14,7 +14,7 @@ def load_model(export_dir):
 
 
 def test_dataset(image_path):
-    return RockDataset(220, 220).load(image_path).batch(1)
+    return DatasetCreator(220, 220).load(image_path).batch(1)
 
 
 def predict(image_path):

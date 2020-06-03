@@ -17,7 +17,7 @@ class BaseModelOperate:
         gpu_init(6000)
         self.__model = None
         self.__ds = None
-        self.__label_file = "../save/lables_{0}.json".format(self.__class__.__name__)
+        self.__label_file = "../save/lables_{0}.csv".format(self.__class__.__name__)
         self.__image_x = image_x
         self.__image_y = image_y
         self.__image_root = image_root
@@ -28,6 +28,14 @@ class BaseModelOperate:
         over_write(self.__label_file, str(image_label.label_name_idx))
         return self
 
+<<<<<<< HEAD
+=======
+    def __write_labels(self):
+        with open(self.__label_file, 'w') as file:
+            for label in ALL_LABELS.items():
+                file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
+
+>>>>>>> 02a37b7... class image_info ok
     def _create(self, image_x, image_y):
         return None
 
@@ -89,10 +97,8 @@ class StarModel(BaseModelOperate):
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
-            keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
-            keras.layers.Dense(512, activation=tf.nn.relu),
-            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(120, activation=tf.nn.relu),
             keras.layers.Dense(10)
         ])
         return model
