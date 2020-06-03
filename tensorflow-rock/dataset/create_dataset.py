@@ -2,28 +2,24 @@ from dataset.image_file import *
 
 
 class DatasetCreator:
-    image_label: ImageLabels
 
     def __init__(self, image_x=64, image_y=64):
         self.image_x = image_x
         self.image_y = image_y
         self.ds = None
-        self.image_label = None
 
     def load(self, root):
         return self.__create_dataset(root)
 
     def batch(self, batch):
-        return self.ds.batch(batch), self.image_label
+        return self.ds.batch(batch)
 
     def repeat(self):
         self.ds = self.ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
         return self
 
-    def __load_and_preprocess_from_path_label(self, path, lable):
-        images = image_byte_array(path, self.image_x, self.image_y)
-        print("Preprocess Image:", path, lable)
-        return images, lable
+    def __load_and_preprocess_from_path_label(self, path):
+        return image_byte_array(path, self.image_x, self.image_y)
 
     def __create_dataset(self, root):
         image_infos = image_labels(root)
@@ -37,6 +33,8 @@ class DatasetCreator:
 
 
 if __name__ == '__main__':
-    ds = DatasetCreator().load('/WORK/datasset/rock_imgs_train2', 15)
+    ds = DatasetCreator().load('/WORK/datasset/rock_imgs_train2').batch(15)
     for element in ds:
         print(element)
+    for lable, label_info in ALL_LABELS.items():
+        print(lable, label_info.label_idx)

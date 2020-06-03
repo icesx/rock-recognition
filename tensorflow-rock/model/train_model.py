@@ -9,6 +9,7 @@ from tensorflow import keras
 
 from utils.my_file import over_write
 from utils.tf_board import tf_board
+from dataset.image_file import ALL_LABELS
 
 
 class BaseModelOperate:
@@ -23,14 +24,17 @@ class BaseModelOperate:
         self.__image_root = image_root
 
     def load(self, batch=10):
-        self.__ds, image_label = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y).load(
+        creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
+        self.__ds = creator.load(
             self.__image_root).repeat().batch(batch)
-        over_write(self.__label_file, str(image_label.label_name_idx))
+        self.__write_labels()
         return self
+
     def __write_labels(self):
         with open(self.__label_file, 'w') as file:
             for label in ALL_LABELS.items():
                 file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
+
     def _create(self, image_x, image_y):
         return None
 
