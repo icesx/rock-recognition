@@ -27,15 +27,10 @@ class BaseModelOperate:
             self.__image_root).repeat().batch(batch)
         over_write(self.__label_file, str(image_label.label_name_idx))
         return self
-
-<<<<<<< HEAD
-=======
     def __write_labels(self):
         with open(self.__label_file, 'w') as file:
             for label in ALL_LABELS.items():
                 file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
-
->>>>>>> 02a37b7... class image_info ok
     def _create(self, image_x, image_y):
         return None
 
