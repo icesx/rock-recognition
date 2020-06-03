@@ -1,30 +1,37 @@
-import tensorflow as tf
-import pathlib
-import random
-from utils.image_file import *
-from utils.plot import *
-from utils.my_file import file_resave
+from dataset.image_file import *
 
 
 class RockDataset:
+    image_label: ImageLabels
+
     def __init__(self, image_x=64, image_y=64):
         self.image_x = image_x
         self.image_y = image_y
+        self.ds = None
+        self.image_label = None
 
-    def load(self, root, batch):
-        return self.__create_dataset(root, batch)
+    def load(self, root):
+        return self.__create_dataset(root)
+
+    def batch(self, batch):
+        return self.ds.batch(batch), self.image_label
+
+    def repeat(self):
+        self.ds = self.ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
+        return self
 
     def __load_and_preprocess_from_path_label(self, path, lable):
         images = image_byte_array(path, self.image_x, self.image_y)
+        print("Preprocess Image:", path, lable)
         return images, lable
 
-    def __create_dataset(self, root, batch):
-        image_label=image_labels(root)
+    def __create_dataset(self, root):
+        image_label = image_labels(root)
+        self.image_label = image_label
         ds = tf.data.Dataset.from_tensor_slices((image_label.paths, image_label.label_idx))
-        ds = ds.map(self.__load_and_preprocess_from_path_label)
-        ds = ds.cache()
-        ds = ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
-        return ds.batch(batch), image_label
+        self.ds = ds.map(self.__load_and_preprocess_from_path_label)
+        # self.ds = ds.cache()
+        return self
 
 
 if __name__ == '__main__':
