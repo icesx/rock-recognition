@@ -7,7 +7,7 @@ import tensorflow as tf
 from model.predict_model import PredictModel
 
 if __name__ == '__main__':
-    pm = PredictModel("../save/star")
+    pm = PredictModel("../save/model/star")
     for i in range(1, 20):
         result = pm.predict("/WORK/datasset/star_imgs/pengyuyan/{0}.png".format(i), 128, 128)
         for re in result:

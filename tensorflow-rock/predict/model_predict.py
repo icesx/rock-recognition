@@ -18,7 +18,7 @@ def test_dataset(image_path):
 
 
 def predict(image_path):
-    model = load_model("../save/rock")
+    model = load_model("../save/model/rock")
     ds, image_labels = test_dataset(image_path=image_path)
     # for t, l in enumerate(ds):
     #     print(l[1], image_labels.idx_name_label)
@@ -27,17 +27,6 @@ def predict(image_path):
     for i, r in enumerate(result):
         print(tf.argmax(r), image_labels.label_name[i],image_labels.idx_name_label[tf.argmax(r).numpy()])
 
-
-def test_tensor(image_path):
-    all_image_bytes, all_image_labels = images_byte_array(image_path, 128, 128)
-    print(all_image_labels[0:10])
-    predict(all_image_labels[0:10])
-    ds = tf.data.Dataset.from_tensor_slices((all_image_bytes, all_image_labels))
-    model = load_model("../save/rock")
-    print(model)
-    result = model.predict(ds, steps=5)
-    # for i, r in result:
-    #     print(tf.argmax(r), all_image_labels[i])
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@ from model.predict_model import PredictModel
 from utils.my_file import file_list
 
 if __name__ == '__main__':
-    pm = PredictModel("../save/rock")
+    pm = PredictModel("../save/model/rock")
     for i in file_list("/WORK/datasset/rock_imgs_test/中性火山岩"):
         result = pm.predict(i, 128, 128)
         for re in result:
