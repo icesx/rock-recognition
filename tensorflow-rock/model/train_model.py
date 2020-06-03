@@ -14,7 +14,7 @@ from dataset.image_file import ALL_LABELS
 
 class BaseModelOperate:
     def __init__(self, image_root, image_x, image_y):
-        from utils.gpu import gpu_init
+        from utils.tf_gpu import gpu_init
         gpu_init(6000)
         self.__model = None
         self.__ds = None

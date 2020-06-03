@@ -8,12 +8,12 @@ from dataset.image_file import image_labels
 from utils.my_file import copy, mk_dir
 
 
-def random_dataset(root, train_root, test_root):
+def random_dataset(root, ratio, train_root, test_root):
     image_infos = image_labels(root)
     print("path 10 images", image_infos[0:10])
     random.shuffle(image_infos)
     paths_len = len(image_infos)
-    i = int(paths_len * 0.8)
+    i = int(paths_len * ratio)
     train = image_infos[:i]
     test = image_infos[i:]
     __copy(train, train_root)

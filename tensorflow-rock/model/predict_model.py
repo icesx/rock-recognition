@@ -10,7 +10,7 @@ from dataset.image_file import image_byte_array
 
 class PredictModel:
     def __init__(self, export_dir):
-        from utils.gpu import gpu_init
+        from utils.tf_gpu import gpu_init
         gpu_init(6000)
         print("load model from ", export_dir)
         self.__model = keras.models.load_model(export_dir)
