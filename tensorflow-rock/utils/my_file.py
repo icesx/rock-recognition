@@ -30,6 +30,16 @@ def mk_dir(dir):
 
 
 def file_list(root_path):
+    s = '*/*'
+    return __list_file(root_path, s)
+
+
+def file_current(root_path):
+    s = './*'
+    return __list_file(root_path, s)
+
+
+def __list_file(root_path, s):
     root_path = pathlib.Path(root_path)
-    all_image_paths = list(root_path.glob('./*'))
+    all_image_paths = list(root_path.glob(s))
     return [str(path) for path in all_image_paths]
