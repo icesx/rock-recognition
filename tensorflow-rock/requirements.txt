@@ -2,3 +2,4 @@ tensorflow-gpu
 matplotlib
 numpy==1.16
 pandas
+scipy

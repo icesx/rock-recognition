@@ -1,3 +1,5 @@
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
+
 from dataset.image_file import *
 
 
@@ -23,13 +25,12 @@ class DatasetCreator:
 
     def __create_dataset(self, root):
         image_infos = image_labels(root)
-        self.__ds_size = len(image_infos)
         path_ds = tf.data.Dataset.from_tensor_slices([ii.path_str for ii in image_infos])
         image_ds = path_ds.map(self.__load_and_preprocess_from_path_label)
         label_ds = tf.data.Dataset.from_tensor_slices(
             tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
         self.ds = tf.data.Dataset.zip((image_ds, label_ds))
-        self.ds = self.ds.repeat()
+        self.ds = self.ds.repeat().shuffle(buffer_size=1024)
         return self
 
 

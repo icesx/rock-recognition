@@ -4,7 +4,7 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow import keras
-
+import random
 from utils.my_file import file_list
 
 
@@ -17,10 +17,12 @@ def augment(path, image_x, image_y):
     save(path + "_adjust_contrast", image_2)
     image_3 = tf.image.random_brightness(image, max_delta=0.5)
     save(path + "_random_brightness", image_3)
-    image_4 = tf.image.random_flip_left_right(image,2)
-    save(path + "_random_flip_1", image_4)
-    image_5 = tf.image.random_flip_up_down(image,3)
-    save(path + "_random_flip_2", image_5)
+    image_4 = tf.image.flip_left_right(image)
+    save(path + "_flip_left_right", image_4)
+    image_5 = tf.image.flip_up_down(image)
+    save(path + "_flip_up_down", image_5)
+    image_6 = tf.image.rot90(image_5, k=random.randint(1, 3))
+    save(path + "_rot90", image_6)
     return image
 
 
@@ -31,7 +33,7 @@ def save(path, image):
 
 
 if __name__ == '__main__':
-    listf = file_list("/WORK/datasset/star_imgs_train/")
+    listf = file_list("/WORK/datasset/flower_photos_train/")
     for f in listf:
         if "_AUG_" not in f:
             augment(f, 128, 128)

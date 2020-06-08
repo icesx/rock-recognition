@@ -86,19 +86,9 @@ def image_labels(root: object) -> [ImageInfo]:
     return image_infos
 
 
-def augment(image, image_x, image_y):
-    image = tf.image.resize_with_crop_or_pad(image, image_x, image_y)
-    image = tf.image.random_crop(image, size=[image_x, image_y, 3])
-    image = tf.image.random_brightness(image, max_delta=0.5)
-    image = tf.image.random_flip_left_right(image)
-    image = tf.image.random_flip_up_down(image)
-    return image
-
-
 def image_byte_array(path, image_x, image_y):
     image = tf.io.read_file(path)
     image = tf.image.decode_jpeg(image, channels=3)
-    image = augment(image, image_x, image_y)
     image = tf.image.resize(image, [image_x, image_y])
     image /= 255.0
     return image

@@ -13,7 +13,7 @@ class PredictModel:
         gpu_init(6000)
         print("load model from ", export_dir)
         self.__model = keras.models.load_model(export_dir)
-        self.__model_predict = keras.Sequential([self.model,
+        self.__model_predict = keras.Sequential([self.__model,
                                                  keras.layers.Softmax()])
 
     def image_byte_array(self, path, image_x, image_y):
