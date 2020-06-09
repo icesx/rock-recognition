@@ -30,4 +30,4 @@ if __name__ == '__main__':
                steps_per_epoch=300,
                epochs=20,
                validation_steps=21,
-               provide_model_fun=_provide_model)
+               fun_provide_model=_provide_model)

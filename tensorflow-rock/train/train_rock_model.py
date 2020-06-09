@@ -26,8 +26,8 @@ if __name__ == '__main__':
                                         image_x=128,
                                         image_y=128),
                      name="Rock").train(batch=10,
-                                    steps_per_epoch=150,
-                                    epochs=300,
-                                    validation_steps=20,
-                                    evaluete_steps=20,
-                                    provide_model_fun=_provide_model)
+                                        steps_per_epoch=150,
+                                        epochs=300,
+                                        validation_steps=20,
+                                        evaluete_steps=20,
+                                        fun_provide_model=_provide_model)

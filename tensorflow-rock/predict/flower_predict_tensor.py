@@ -4,7 +4,7 @@
 # Contact: 12157724@qq.com
 import tensorflow as tf
 
-from dataset.create_dataset import DatasetCreator
+from dataset.create_dataset import CustomDatasetCreator
 from model.predict_model import PredictModel
 from utils.my_file import file_current
 
@@ -22,7 +22,7 @@ def predict_files():
 
 def evaluate():
     pm = PredictModel("../save/model/flower")
-    creator = DatasetCreator(image_x=IMG_X, image_y=IMG_Y)
+    creator = CustomDatasetCreator(image_x=IMG_X, image_y=IMG_Y)
     ds = creator.load(
         "/WORK/datasset/flower_photos_test/").batch(batch=10).get()
     result = pm.evaluate(ds)

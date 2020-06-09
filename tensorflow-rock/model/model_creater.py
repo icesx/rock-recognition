@@ -2,25 +2,35 @@
 # Copyright (C)
 # Author: I
 # Contact: 12157724@qq.com
-from dataset.create_dataset import DatasetCreator
+from tensorflow.python.keras.callbacks import LearningRateScheduler
+
+from dataset.create_dataset import CustomDatasetCreator
 from dataset.dataset_group import DatasetGroup
 from utils.tf_board import tf_board
 import tensorflow as tf
 from tensorflow import keras
 from dataset.image_file import ALL_LABELS
+import tensorflow_datasets as tfds
 
 
-def _fit(dataset, validation_ds, model, epochs, steps_per_epoch, validation_steps, tf_board_name):
-    model.fit(dataset,
-              epochs=epochs,
-              steps_per_epoch=steps_per_epoch,
-              validation_data=validation_ds,
-              validation_steps=validation_steps,
-              callbacks=[tf_board(tf_board_name)])
+def _fit(dataset,
+         validation_ds,
+         model,
+         epochs,
+         steps_per_epoch,
+         validation_steps,
+         tf_board_name):
+    return model.fit(dataset,
+                     epochs=epochs,
+                     steps_per_epoch=steps_per_epoch,
+                     validation_data=validation_ds,
+                     validation_steps=validation_steps,
+                     callbacks=[tf_board(tf_board_name)])
 
 
 def _compile(model):
-    model.compile(optimizer="adam",
+    optimizer_1 = tf.keras.optimizers.Adam()
+    model.compile(optimizer=optimizer_1,
                   loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=["accuracy"
                            # , tf.keras.metrics.Recall(class_id=0)
@@ -53,21 +63,21 @@ class BaseModelOperate(object):
               epochs=100,
               validation_steps=28,
               evaluete_steps=10,
-              provide_model_fun=None,
-              compile_fun=_compile,
-              fit_fun=_fit,
-              save_model_fun=_save,
+              fun_provide_model=None,
+              fun_compile=_compile,
+              fun_fit=_fit,
+              fun_save_model=_save,
               evaluete=_evaluete
               ):
         ds_train = self.dataset_group.train(batch)
         ds_test = self.dataset_group.validation(batch)
-        __model = provide_model_fun(self.dataset_group.image_y,self.dataset_group.image_x)
+        __model = fun_provide_model(self.dataset_group.image_y, self.dataset_group.image_x)
         if __model is None:
             print("please overrider _train()")
         else:
-            compile_fun(__model)
+            fun_compile(__model)
             __model.summary()
-            fit_fun(ds_train, ds_test, __model, epochs, steps_per_epoch, validation_steps, self.__name)
-            save_model_fun(__model, "../save/model/" + self.__name)
+            history = fun_fit(ds_train, ds_test, __model, epochs, steps_per_epoch, validation_steps, self.__name)
+            fun_save_model(__model, "../save/model/" + self.__name)
             evaluete(__model, ds_test, evaluete_steps)
             return self

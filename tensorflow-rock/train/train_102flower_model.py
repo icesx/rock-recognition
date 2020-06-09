@@ -42,4 +42,4 @@ if __name__ == '__main__':
                              epochs=100,
                              validation_steps=30,
                              evaluete_steps=10,
-                             provide_model_fun=_provide_model)
+                             fun_provide_model=_provide_model)
