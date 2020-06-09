@@ -4,7 +4,7 @@
 # Contact: 12157724@qq.com
 import tensorflow as tf
 
-from dataset.create_dataset import CustomDatasetCreator
+from dataset.dataset_creator import CustomDatasetCreator
 
 
 class DatasetGroup:

@@ -4,7 +4,6 @@
 # Contact: 12157724@qq.com
 import pathlib
 import random
-import threading
 
 import tensorflow as tf
 from utils import IDG
