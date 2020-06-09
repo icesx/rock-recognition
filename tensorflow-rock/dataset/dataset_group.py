@@ -5,7 +5,6 @@
 import tensorflow as tf
 
 from dataset.create_dataset import CustomDatasetCreator
-from dataset.image_file import ALL_LABELS
 
 
 class DatasetGroup:
@@ -21,12 +20,9 @@ class DatasetGroup:
 
 class CustomDatasetGroup(DatasetGroup):
     def __init__(self, train_root, validation_root, image_y, image_x):
-        from utils.tf_gpu import gpu_init
-
-        gpu_init(6000)
+        DatasetGroup.__init__(self)
         self.__image_x = image_x
         self.__image_y = image_y
-        DatasetGroup.__init__(self)
         self.__validation = CustomDatasetCreator(validation_root, image_y, image_x)
         self.__train = CustomDatasetCreator(train_root, image_y, image_x)
 
@@ -43,9 +39,6 @@ class CustomDatasetGroup(DatasetGroup):
 
     def train(self, batch) -> tf.data.Dataset:
         return self.__train.batch(batch).get()
-
-
-import tensorflow_datasets as tfds
 
 
 class TfDatasetGroup(DatasetGroup):

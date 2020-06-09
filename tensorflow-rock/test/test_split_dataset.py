@@ -4,7 +4,7 @@
 # Contact: 12157724@qq.com
 import unittest
 from unittest import TestCase
-from dataset.split_dataset import random_dataset
+from preprocess.split_dataset import random_dataset
 
 
 class TestSplitDataset(TestCase):

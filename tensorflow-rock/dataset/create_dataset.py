@@ -3,20 +3,23 @@ from keras_preprocessing.image import ImageDataGenerator
 from dataset.image_file import image_byte_array, image_labels, ALL_LABELS
 import tensorflow as tf
 from utils.plot import PlotContext
+from utils.tf_gpu import gpu_init
 
 
 class DatasetCreator(object):
     def __init__(self, root, image_y=64, image_x=64):
+        gpu_init(6000)
+        print("DatasetCreator: init GPU.....")
         self._image_x = image_x
         self._image_y = image_y
         self.__ds = self._create_dataset(root)
-        self.__show_ds(self.__ds)
+        self.__plot_dataset()
 
-    def __show_ds(self, ds):
-        pc = PlotContext()
+    def __plot_dataset(self):
+        pc = PlotContext(ncols=6, nrows=6)
         labels = dict((v.label_idx, v.label_name) for k, v in ALL_LABELS.items())
         print("ALL Labels:", labels)
-        for image, label in ds.take(36):
+        for image, label in self.__ds.take(36):
             pc.append(image, labels.get(label.numpy()))
         pc.show()
 
