@@ -30,15 +30,15 @@ def _provide_model(image_y, image_x):
 
 
 if __name__ == '__main__':
-    image_x = 128
-    image_y = 128
+    image_x = 224
+    image_y = 224
     BaseModelOperate(CustomDatasetGroup(train_root="/WORK/datasset/102flowers_train",
                                         validation_root="/WORK/datasset/102flowers_test",
                                         image_y=image_y,
                                         image_x=image_x),
                      name="Flower102Model",
-                     ).train(batch=20,
-                             steps_per_epoch=300,
+                     ).train(batch=30,
+                             steps_per_epoch=210,
                              epochs=100,
                              validation_steps=30,
                              evaluete_steps=10,
