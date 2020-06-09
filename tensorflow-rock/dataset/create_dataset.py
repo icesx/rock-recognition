@@ -1,17 +1,14 @@
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 
-from dataset.image_file import *
+from dataset.image_file import image_byte_array, image_labels
+import tensorflow as tf
 
 
 class DatasetCreator:
 
-    def __init__(self, image_x=64, image_y=64):
+    def __init__(self, root, image_x=64, image_y=64):
         self.image_x = image_x
         self.image_y = image_y
-        self.ds = None
-
-    def load(self, root):
-        return self.__create_dataset(root)
+        self.ds = self.__create_dataset(root)
 
     def batch(self, batch):
         self.ds = self.ds.batch(batch)
@@ -29,13 +26,13 @@ class DatasetCreator:
         image_ds = path_ds.map(self.__load_and_preprocess_from_path_label)
         label_ds = tf.data.Dataset.from_tensor_slices(
             tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
-        self.ds = tf.data.Dataset.zip((image_ds, label_ds))
-        self.ds = self.ds.repeat().shuffle(buffer_size=1024)
-        return self
+        ds = tf.data.Dataset.zip((image_ds, label_ds))
+        ds = ds.repeat().shuffle(buffer_size=1024)
+        return ds
 
 
 if __name__ == '__main__':
-    ds = DatasetCreator().load('/WORK/datasset/star_imgs_test').get()
+    ds = DatasetCreator('/WORK/datasset/star_imgs_test').get()
     i = 0
     for element in ds:
         i += 1

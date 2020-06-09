@@ -3,71 +3,71 @@
 # Author: I
 # Contact: 12157724@qq.com
 from dataset.create_dataset import DatasetCreator
+from dataset.dataset_group import DatasetGroup
 from utils.tf_board import tf_board
 import tensorflow as tf
 from tensorflow import keras
 from dataset.image_file import ALL_LABELS
 
 
-class BaseModelOperate:
-    def __init__(self, image_x, image_y):
-        from utils.tf_gpu import gpu_init
-        gpu_init(6000)
-        self.__model = None
-        self.__ds_train = None
-        self.__ds_test = None
-        self.__label_file = "../save/lables_{0}.csv".format(self.__class__.__name__)
-        self.__image_x = image_x
-        self.__image_y = image_y
+def _fit(dataset, validation_ds, model, epochs, steps_per_epoch, validation_steps, tf_board_name):
+    model.fit(dataset,
+              epochs=epochs,
+              steps_per_epoch=steps_per_epoch,
+              validation_data=validation_ds,
+              validation_steps=validation_steps,
+              callbacks=[tf_board(tf_board_name)])
 
-    def load(self, train_image_root, test_image_root, batch=10):
-        self.__ds_train = self.__dataset(batch, train_image_root)
-        self.__ds_test = self.__dataset(batch, test_image_root)
-        self.__write_labels()
-        return self
 
-    def __dataset(self, batch, image_root):
-        creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
-        return creator.load(
-            image_root).batch(batch).get()
+def _compile(model):
+    model.compile(optimizer="adam",
+                  loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  metrics=["accuracy"
+                           # , tf.keras.metrics.Recall(class_id=0)
+                           ])
 
-    def __write_labels(self):
-        with open(self.__label_file, 'w') as file:
-            for label in ALL_LABELS.items():
-                file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
 
-    def train(self, steps_per_epoch, epochs=100, validation_steps=28):
-        self.__model = self._provide_model(self.__image_x, self.__image_y)
-        if self.__model is None:
+def _save(model, save_dir):
+    tf.saved_model.save(model, export_dir=save_dir)
+
+
+def _evaluete(model, test_dataset, evalue_step=10):
+    test_loss = model.evaluate(test_dataset, evalue_step)
+    print(test_loss)
+
+
+def _write_labels(label_file):
+    with open(label_file, 'w') as file:
+        for label in ALL_LABELS.items():
+            file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
+
+
+class BaseModelOperate(object):
+    def __init__(self, dataset_group, name):
+        self.dataset_group = dataset_group
+        self.__name = name
+        _write_labels("../save/" + name + ".csv")
+
+    def train(self, batch,
+              steps_per_epoch,
+              epochs=100,
+              validation_steps=28,
+              evaluete_steps=10,
+              provide_model_fun=None,
+              compile_fun=_compile,
+              fit_fun=_fit,
+              save_model_fun=_save,
+              evaluete=_evaluete
+              ):
+        ds_train = self.dataset_group.train(batch)
+        ds_test = self.dataset_group.validation(batch)
+        __model = provide_model_fun(self.dataset_group.image_y,self.dataset_group.image_x)
+        if __model is None:
             print("please overrider _train()")
         else:
-            self.__compile(self.__model)
-            self.__model.summary()
-            self._fit(self.__ds_train, self.__model, epochs, steps_per_epoch, validation_steps)
-            self.__evaluete(self.__model, self.__ds_test.repeat())
+            compile_fun(__model)
+            __model.summary()
+            fit_fun(ds_train, ds_test, __model, epochs, steps_per_epoch, validation_steps, self.__name)
+            save_model_fun(__model, "../save/model/" + self.__name)
+            evaluete(__model, ds_test, evaluete_steps)
             return self
-
-    def _provide_model(self, image_x, image_y):
-        pass
-
-    def save(self, save_dir):
-        tf.saved_model.save(self.__model, export_dir=save_dir)
-
-    def _fit(self, dataset, model, epochs, steps_per_epoch, validation_steps):
-        model.fit(dataset,
-                  epochs=epochs,
-                  steps_per_epoch=steps_per_epoch,
-                  validation_data=self.__ds_test,
-                  validation_steps=validation_steps,
-                  callbacks=[tf_board(self.__class__.__name__)])
-
-    def __evaluete(self, model, test_dataset):
-        test_loss = model.evaluate(test_dataset, steps=10)
-        print(test_loss)
-
-    def __compile(self, model):
-        model.compile(optimizer="adam",
-                      loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                      metrics=["accuracy"
-                               # , tf.keras.metrics.Recall(class_id=0)
-                               ])

@@ -3,3 +3,4 @@ matplotlib
 numpy==1.16
 pandas
 scipy
+tensorflow_datasets==3.0.0
