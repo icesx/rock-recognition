@@ -23,8 +23,8 @@ def _provide_model(image_y, image_x):
 
 
 if __name__ == '__main__':
-    BaseModelOperate(CustomDatasetGroup(train_image_root="/WORK/datasset/star_imgs_train",
-                                        test_image_root="/WORK/datasset/star_imgs_test",
+    BaseModelOperate(CustomDatasetGroup(train_root="/WORK/datasset/star_imgs_train",
+                                        validation_root="/WORK/datasset/star_imgs_test",
                                         image_x=128, image_y=128), name="Start") \
         .train(batch=21,
                steps_per_epoch=300,

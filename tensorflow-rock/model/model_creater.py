@@ -2,15 +2,12 @@
 # Copyright (C)
 # Author: I
 # Contact: 12157724@qq.com
-from tensorflow.python.keras.callbacks import LearningRateScheduler
+from tensorflow.python.keras import Model
 
-from dataset.dataset_creator import CustomDatasetCreator
-from dataset.dataset_group import DatasetGroup
 from utils.tf_board import tf_board
 import tensorflow as tf
 from tensorflow import keras
 from dataset.image_file import ALL_LABELS
-import tensorflow_datasets as tfds
 
 
 def _fit(dataset,
@@ -29,8 +26,7 @@ def _fit(dataset,
 
 
 def _compile(model):
-    optimizer_1 = tf.keras.optimizers.Adam()
-    model.compile(optimizer=optimizer_1,
+    model.compile(optimizer=tf.keras.optimizers.Adam(),
                   loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=["accuracy"
                            # , tf.keras.metrics.Recall(class_id=0)
@@ -38,11 +34,12 @@ def _compile(model):
 
 
 def _save(model, save_dir):
+    print("Save model " + str(model) + " to " + save_dir)
     tf.saved_model.save(model, export_dir=save_dir)
 
 
-def _evaluete(model, test_dataset, evalue_step=10):
-    test_loss = model.evaluate(test_dataset, evalue_step)
+def _evaluate(model, test_dataset, evaluate_step=10):
+    test_loss = model.evaluate(test_dataset, steps=evaluate_step)
     print(test_loss)
 
 
@@ -62,13 +59,12 @@ class BaseModelOperate(object):
               steps_per_epoch,
               epochs=100,
               validation_steps=28,
-              evaluete_steps=10,
-              fun_provide_model=None,
+              evaluate_steps=10,
+              fun_provide_model: Model = None,
               fun_compile=_compile,
               fun_fit=_fit,
               fun_save_model=_save,
-              evaluete=_evaluete
-              ):
+              evaluate=_evaluate):
         ds_train = self.dataset_group.train(batch)
         ds_test = self.dataset_group.validation(batch)
         __model = fun_provide_model(self.dataset_group.image_y, self.dataset_group.image_x)
@@ -77,7 +73,8 @@ class BaseModelOperate(object):
         else:
             fun_compile(__model)
             __model.summary()
-            history = fun_fit(ds_train, ds_test, __model, epochs, steps_per_epoch, validation_steps, self.__name)
+            fun_fit(ds_train, ds_test, __model, epochs, steps_per_epoch, validation_steps, self.__name)
+            evaluate(__model, ds_test, evaluate_steps)
             fun_save_model(__model, "../save/model/" + self.__name)
-            evaluete(__model, ds_test, evaluete_steps)
+            print("Finished.")
             return self

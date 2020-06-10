@@ -52,7 +52,7 @@ if __name__ == '__main__':
                                         image_x=224, image_y=224),
                      name="FlowerModel").train(batch=28,
                                                steps_per_epoch=100,
-                                               epochs=100,
+                                               epochs=2,
                                                validation_steps=30,
                                                fun_provide_model=_provide_model,
                                                )

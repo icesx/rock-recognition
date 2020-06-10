@@ -22,9 +22,9 @@ def predict_files():
 
 def evaluate():
     pm = PredictModel("../save/model/star")
-    creator = CustomDatasetCreator(image_x=IMG_X, image_y=IMG_Y)
-    ds = creator.load(
-        "/WORK/datasset/star_imgs_test/").batch(batch=10).get()
+    ds = CustomDatasetCreator("/WORK/datasset/star_imgs_test/",
+                              image_x=IMG_X,
+                              image_y=IMG_Y).get()
     result = pm.evaluate(ds)
     print(result)
 

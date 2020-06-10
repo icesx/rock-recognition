@@ -19,7 +19,10 @@ class DatasetGroup:
 
 
 class CustomDatasetGroup(DatasetGroup):
-    def __init__(self, train_root, validation_root, image_y, image_x):
+    def __init__(self, train_root,
+                 validation_root,
+                 image_y,
+                 image_x):
         DatasetGroup.__init__(self)
         self.__image_x = image_x
         self.__image_y = image_y
