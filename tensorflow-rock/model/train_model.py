@@ -13,12 +13,13 @@ from dataset.image_file import ALL_LABELS
 
 
 class BaseModelOperate:
-    def __init__(self, image_root, image_x, image_y):
+    def __init__(self, image_root, image_x, image_y, module_name=None):
         from utils.tf_gpu import gpu_init
         gpu_init(6000)
         self.__model = None
         self.__ds = None
-        self.__label_file = "../save/lables_{0}.csv".format(self.__class__.__name__)
+        __module_name = module_name if module_name is not None else self.__class__.__name__
+        self.__label_file = "../save/lables_{0}.csv".format(__module_name)
         self.__image_x = image_x
         self.__image_y = image_y
         self.__image_root = image_root
@@ -104,8 +105,8 @@ class StarModel(BaseModelOperate):
 
 
 class Mnist(BaseModelOperate):
-    def __init__(self, image_root, image_x=28, image_y=28):
-        BaseModelOperate.__init__(self, image_root, image_x, image_y)
+    def __init__(self, image_root, image_x=28, image_y=28, module_name="mnist"):
+        BaseModelOperate.__init__(self, image_root, image_x, image_y, module_name)
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
@@ -115,3 +116,8 @@ class Mnist(BaseModelOperate):
             keras.layers.Dense(10)
         ])
         return model
+
+
+class FashionMnist(Mnist):
+    def __init__(self, image_root, image_x=28, image_y=28):
+        Mnist.__init__(self, image_root, image_x, image_y, "fashion_mnist")

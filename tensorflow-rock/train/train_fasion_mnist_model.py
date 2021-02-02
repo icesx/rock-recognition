@@ -1,8 +1,8 @@
-from model.train_model import RockModel, Mnist
+from model.train_model import RockModel, Mnist, FashionMnist
 
 if __name__ == '__main__':
-    Mnist(image_root="/WORK/datasset/fashion_mnist/train") \
+    FashionMnist(image_root="/WORK/datasset/fashion_mnist/train") \
         .load(batch=15) \
         .train(steps_per_epoch=150,
-               epochs=300) \
+               epochs=100) \
         .save("../save/model/fashion_mnist")
