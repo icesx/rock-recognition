@@ -10,10 +10,13 @@ from utils.my_file import *
 
 class TestFile(TestCase):
     def test_file_list(self):
-        ls = file_list("/WORK/datasset/rock_imgs_test/三棱石")
+        ls = file_list("/WORK/datasset/mnist/test/0")
         for f in ls:
             print(f)
 
 
 if __name__ == '__main__':
     unittest.main()
+    ls = file_list("/WORK/datasset/mnist/test/0")
+    for f in ls:
+        print(f)

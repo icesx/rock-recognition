@@ -101,3 +101,17 @@ class StarModel(BaseModelOperate):
             keras.layers.Dense(10)
         ])
         return model
+
+
+class Mnist(BaseModelOperate):
+    def __init__(self, image_root, image_x=28, image_y=28):
+        BaseModelOperate.__init__(self, image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        model = keras.Sequential([
+            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Flatten(input_shape=(28, 28)),
+            keras.layers.Dense(120, activation=tf.nn.relu),
+            keras.layers.Dense(10)
+        ])
+        return model
