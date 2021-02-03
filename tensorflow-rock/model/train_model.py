@@ -100,7 +100,7 @@ class StarModel(BaseModelOperate):
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
-            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(240, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
@@ -108,6 +108,26 @@ class StarModel(BaseModelOperate):
             keras.layers.Flatten(),
             keras.layers.Dense(120, activation=tf.nn.relu),
             keras.layers.Dense(10)
+        ])
+        return model
+
+
+class BirdModel(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_x=224, image_y=224):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        model = keras.Sequential([
+            keras.layers.Conv2D(120, (3, 3), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Flatten(),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(300, activation=tf.nn.relu),
+            keras.layers.Dense(250)
         ])
         return model
 
@@ -125,7 +145,7 @@ class Flower102Model(BaseModelOperate):
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.Flatten(),
             keras.layers.Dense(120, activation=tf.nn.relu),
-            keras.layers.Dense(10)
+            keras.layers.Dense(102)
         ])
         return model
 
