@@ -7,7 +7,7 @@ import random
 from dataset.image_file import image_labels
 from utils.my_file import copy, mk_dir
 
-
+# random split dataset image file
 def random_dataset(root, ratio, train_root, test_root):
     image_infos = image_labels(root)
     print("path 10 images", image_infos[0:10])
