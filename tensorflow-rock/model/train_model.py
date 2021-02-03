@@ -112,6 +112,24 @@ class StarModel(BaseModelOperate):
         return model
 
 
+class Flower102Model(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_x, image_y):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        model = keras.Sequential([
+            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.Flatten(),
+            keras.layers.Dense(120, activation=tf.nn.relu),
+            keras.layers.Dense(10)
+        ])
+        return model
+
+
 class Mnist(BaseModelOperate):
     def __init__(self, image_root, val_image_root, image_x=28, image_y=28, module_name="mnist"):
         BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y, module_name)
