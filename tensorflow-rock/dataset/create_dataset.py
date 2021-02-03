@@ -22,9 +22,6 @@ class DatasetCreator:
     def __load_and_preprocess_from_path_label(self, path):
         return image_byte_array(path, self.__image_x, self.__image_y)
 
-    def take_sample(self, radio):
-        return take_sample(self.__ds, radio)
-
     def __create_dataset(self, root):
         image_infos = image_labels(root)
         path_ds = tf.data.Dataset.from_tensor_slices([ii.path_str for ii in image_infos])

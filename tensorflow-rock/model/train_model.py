@@ -13,28 +13,27 @@ from dataset.image_file import ALL_LABELS
 
 
 class BaseModelOperate:
-    def __init__(self, image_root, image_x, image_y, module_name=None, test_image_root=None):
+    def __init__(self, image_root, val_image_root, image_x, image_y, module_name=None):
         from utils.tf_gpu import gpu_init
         gpu_init(6000)
         self.__model = None
         self.__ds = None
-        self.__test_ds = None
+        self.__val_ds = None
         __module_name = module_name if module_name is not None else self.__class__.__name__
         self.__label_file = "../save/lables_{0}.csv".format(__module_name)
         self.__image_x = image_x
         self.__image_y = image_y
         self.__image_root = image_root
-        self.__test_image_root = test_image_root
-        self.__sample_ratio = 0.1
+        self.__val_image_root = val_image_root
 
     def load(self, batch=10):
         creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
         self.__ds = creator.load(
             self.__image_root).repeat().batch(batch)
-        if self.__test_image_root is None:
-            self.__test_ds = creator.take_sample(self.__sample_ratio)
+        if self.__val_image_root is None:
+            raise Exception("please set test_image_root")
         else:
-            self.__test_ds = creator.load(self.__test_image_root).batch(batch)
+            self.__val_ds = creator.load(self.__val_image_root).batch(batch)
         self.__write_labels()
         return self
 
@@ -53,12 +52,8 @@ class BaseModelOperate:
         else:
             self.compile(self.__model)
             self.__model.summary()
-            self.fit(self.__ds, self.__test_ds, self.__model, epochs, steps_per_epoch)
+            self.fit(self.__ds, self.__val_ds, self.__model, epochs, steps_per_epoch)
             return self
-
-    def eavalute(self, test_ds):
-        test_loss, test_acc = self.__model.evaluate(test_ds, verbose=2)
-        print('Test accuracy:', test_acc)
 
     def save(self, save_dir):
         tf.saved_model.save(self.__model, export_dir=save_dir)
@@ -77,8 +72,8 @@ class BaseModelOperate:
 
 
 class RockModel(BaseModelOperate):
-    def __init__(self, image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_x, image_y):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
@@ -100,8 +95,8 @@ class RockModel(BaseModelOperate):
 
 
 class StarModel(BaseModelOperate):
-    def __init__(self, image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_x, image_y):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
@@ -118,8 +113,8 @@ class StarModel(BaseModelOperate):
 
 
 class Mnist(BaseModelOperate):
-    def __init__(self, image_root, test_image_root, image_x=28, image_y=28, module_name="mnist"):
-        BaseModelOperate.__init__(self, image_root, image_x, image_y, module_name, test_image_root=test_image_root)
+    def __init__(self, image_root, val_image_root, image_x=28, image_y=28, module_name="mnist"):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y, module_name)
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
@@ -132,5 +127,5 @@ class Mnist(BaseModelOperate):
 
 
 class FashionMnist(Mnist):
-    def __init__(self, image_root, image_x=28, image_y=28):
-        Mnist.__init__(self, image_root, image_x, image_y, "fashion_mnist")
+    def __init__(self, image_root, val_image_root, image_x=28, image_y=28):
+        Mnist.__init__(self, image_root, val_image_root, image_x, image_y, module_name="fashion_mnist")
