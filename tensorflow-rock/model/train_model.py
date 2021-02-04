@@ -113,20 +113,25 @@ class StarModel(BaseModelOperate):
 
 
 class BirdModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x=224, image_y=224):
+    def __init__(self, image_root, val_image_root, image_x=112, image_y=112):
         BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
-            keras.layers.Conv2D(120, (3, 3), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(96, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(64, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
-            keras.layers.Dropout(rate=0.2),
-            keras.layers.Dense(300, activation=tf.nn.relu),
+            keras.layers.Dense(250, activation=tf.nn.relu),
             keras.layers.Dense(250)
         ])
         return model
@@ -148,6 +153,23 @@ class Flower102Model(BaseModelOperate):
             keras.layers.Dense(102)
         ])
         return model
+
+
+class Cifar10(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_x=32, image_y=32):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        return keras.Sequential([
+            keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(64, (3, 3), activation='relu'),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(64, (3, 3), activation='relu'),
+            keras.layers.Flatten(),
+            keras.layers.Dense(64, activation='relu'),
+            keras.layers.Dense(10)
+        ])
 
 
 class Mnist(BaseModelOperate):

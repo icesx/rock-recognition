@@ -7,4 +7,4 @@ if __name__ == '__main__':
         .load(batch=10) \
         .train(steps_per_epoch=100,
                epochs=500) \
-        .save("../save/model/star")
+        .save("../save/model/flowers102")
