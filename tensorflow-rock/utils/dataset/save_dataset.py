@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy
 from tensorflow import keras
 
-from tools.load_data import keras_load_data
+from utils.dataset.load_data import keras_load_data
 
 
 def save_fashion_mnist(workdir="/WORK/datasset/fashion_mnist"):
