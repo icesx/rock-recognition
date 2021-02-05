@@ -7,7 +7,6 @@ import tensorflow as tf
 from dataset.create_dataset import DatasetCreator
 from tensorflow import keras
 
-from utils.my_file import over_write
 from utils.tf_board import tf_board
 from dataset.image_file import ALL_LABELS
 
@@ -165,24 +164,28 @@ class Cifar10(BaseModelOperate):
         BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
 
     def _create(self, image_x, image_y):
+        regularizer = keras.regularizers.l2(0.000001)
         return keras.Sequential([
-            keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(image_x, image_y, 3),
-                                kernel_regularizer=keras.regularizers.l2(0.000001), padding='same'),
-            keras.layers.Dropout(rate=0.4),
+            keras.layers.Conv2D(filters=32,
+                                kernel_size=(3, 3),
+                                activation='relu',
+                                input_shape=(image_x, image_y, 3),
+                                kernel_regularizer=regularizer,
+                                padding='same'),
+            keras.layers.Dropout(rate=0.1),
+            keras.layers.MaxPooling2D((3, 3)),
+            keras.layers.Conv2D(96, (3, 3), activation='relu', kernel_regularizer=regularizer, ),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.MaxPooling2D((2, 2)),
-            keras.layers.Conv2D(64, (2, 2), activation='relu'),
-            keras.layers.Dropout(rate=0.4),
+            keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
             keras.layers.MaxPooling2D((2, 2)),
-            keras.layers.Conv2D(96, (2, 2), activation='relu', padding='same'),
-            keras.layers.MaxPooling2D((2, 2)),
-            keras.layers.Conv2D(192, (2, 2), activation='relu'),
-            keras.layers.Conv2D(192, (2, 2), activation='relu', padding='same'),
-            keras.layers.Conv2D(96, (2, 2), activation='relu'),
+            keras.layers.Conv2D(384, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.Conv2D(384, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
             keras.layers.Dense(1024, activation='relu'),
-            keras.layers.Dropout(rate=0.5),
-            keras.layers.Dense(1024, activation='relu'),
-            keras.layers.Dropout(rate=0.5),
+            keras.layers.Dropout(rate=0.3),
             keras.layers.Dense(10, activation='softmax')
         ])
 
