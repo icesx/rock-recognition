@@ -13,11 +13,13 @@ def test_split_star():
                    train_root="/WORK/datasset/star_imgs/train",
                    test_root="/WORK/datasset/star_imgs/val")
 
+
 def test_split_102():
     random_dataset(root="/WORK/datasset/102flowers/all",
                    train_ratio=0.9,
                    train_root="/WORK/datasset/102flowers/train",
                    test_root="/WORK/datasset/102flowers/val")
+
 
 def test_split_rock():
     random_dataset(root="/WORK/datasset/rock_imgs",
@@ -25,5 +27,12 @@ def test_split_rock():
                    test_root="/WORK/datasset/rock_imgs_test")
 
 
+def save_tf_flowers():
+    random_dataset(train_ratio=0.9,
+                   root="/WORK/datasset/flower_photos",
+                   train_root="/WORK/datasset/flower_photos/train",
+                   test_root="/WORK/datasset/flower_photos/val")
+
+
 if __name__ == '__main__':
-    test_split_102()
+    save_tf_flowers()

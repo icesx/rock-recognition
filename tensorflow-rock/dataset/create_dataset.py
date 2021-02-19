@@ -18,7 +18,8 @@ class DatasetCreator:
     def repeat(self):
         self.__ds = self.__ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
         return self
-
+    def augment(self):
+        self.__ds=self.__ds.map(lambda x,y:(flip_rotation(x,)))
     def __load_and_preprocess_from_path_label(self, path):
         return image_byte_array(path, self.__image_x, self.__image_y)
 

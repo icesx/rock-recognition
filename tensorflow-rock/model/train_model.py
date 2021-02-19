@@ -7,6 +7,7 @@ import tensorflow as tf
 from dataset.create_dataset import DatasetCreator
 from tensorflow import keras
 
+from model.data_agument import resize_rescale, flip_rotation
 from utils.tf_board import tf_board
 from dataset.image_file import ALL_LABELS
 
@@ -164,7 +165,7 @@ class Cifar10(BaseModelOperate):
         BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
 
     def _create(self, image_x, image_y):
-        regularizer = keras.regularizers.l2(0.000001)
+        regularizer = keras.regularizers.l2(0.00001)
         return keras.Sequential([
             keras.layers.Conv2D(filters=32,
                                 kernel_size=(3, 3),
