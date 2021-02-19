@@ -33,7 +33,7 @@ class BaseModelOperate:
         if self.__val_image_root is None:
             raise Exception("please set test_image_root")
         else:
-            self.__val_ds = creator.load(self.__val_image_root).batch(batch)
+            self.__val_ds = creator.load(self.__val_image_root, augment=False).batch(batch)
         self.__write_labels()
         return self
 
@@ -156,6 +156,36 @@ class Flower102Model(BaseModelOperate):
             keras.layers.Flatten(),
             keras.layers.Dense(120, activation=tf.nn.relu),
             keras.layers.Dense(102)
+        ])
+        return model
+
+
+class TFFlowerModel(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_x, image_y):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        model = keras.Sequential([
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            # kernel_regularizer=keras.regularizers.l2(0.0001)),
+            keras.layers.MaxPool2D((2, 2)),
+            # keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(96, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            # keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            # keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            # keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Flatten(),
+            keras.layers.Dense(300, activation=tf.nn.relu),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(5)
         ])
         return model
 

@@ -2,9 +2,7 @@
 # Copyright (C)
 # Author: I
 # Contact: 12157724@qq.com
-import unittest
-from unittest import TestCase
-from dataset.split_dataset import random_dataset
+from utils.dataset.split_dataset import random_dataset
 
 
 def test_split_star():
@@ -29,7 +27,7 @@ def test_split_rock():
 
 def save_tf_flowers():
     random_dataset(train_ratio=0.9,
-                   root="/WORK/datasset/flower_photos",
+                   root="/WORK/datasset/flower_photos/all",
                    train_root="/WORK/datasset/flower_photos/train",
                    test_root="/WORK/datasset/flower_photos/val")
 
