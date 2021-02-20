@@ -5,7 +5,7 @@
 # 2/19/21
 import tensorflow as tf
 
-from utils.plot import plot_shows_2
+from utils.plot import plot_shows
 
 
 def rot90(image, label):
@@ -74,19 +74,23 @@ class ImageAugment:
     def images(self):
         return self.__images
 
+    def save(self):
+        for index, image in enumerate(self.__images):
+            augment_image_path = self.__path + "_augment_" + str(index) + ".jpg"
+            print("save agment path %s" % augment_image_path)
+            tf.keras.preprocessing.image.save_img(augment_image_path, image, cmap="gray")
+
 
 if __name__ == '__main__':
     jpg = "/WORK/datasset/flower_photos/train/daisy/99306615_739eb94b9e_m.jpg"
-    images = ImageAugment(
-        jpg) \
-        .flip_up_down() \
-        .flip_left_right() \
-        .central_crop() \
-        .random_brightness() \
-        .rot90() \
-        .rot270() \
-        .images()
-    for index, image in enumerate(images):
-        print(image)
-        tf.keras.preprocessing.image.save_img(jpg + "_augment_" + str(index) + ".jpg", image, cmap="gray")
-    plot_shows_2(images)
+    ia = ImageAugment(jpg)
+    images = (ia
+              .flip_up_down()
+              .flip_left_right()
+              .central_crop()
+              .random_brightness()
+              .rot90()
+              .rot270()
+              .images())
+    ia.save()
+    plot_shows(images)
