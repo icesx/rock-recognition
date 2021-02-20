@@ -7,7 +7,6 @@ import tensorflow as tf
 from dataset.create_dataset import DatasetCreator
 from tensorflow import keras
 
-from model.data_agument import resize_rescale, flip_rotation
 from utils.tf_board import tf_board
 from dataset.image_file import ALL_LABELS
 

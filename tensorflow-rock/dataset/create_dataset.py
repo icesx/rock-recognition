@@ -1,6 +1,6 @@
 from dataset.image_file import *
 from dataset.dataset_sample import take_sample
-from model.data_agument import flip_up_down, rot90, flip_left_right, central_crop, random_brightness
+from utils.dataset.data_augment import flip_up_down, rot90, flip_left_right, central_crop, random_brightness
 
 
 class DatasetCreator:
@@ -22,10 +22,10 @@ class DatasetCreator:
 
     def augment(self, augment):
         if augment is True:
-            self.__ds=self.__ds.concatenate(self.__ds.map(flip_up_down))
-            self.__ds=self.__ds.concatenate(self.__ds.map(random_brightness))
-            self.__ds=self.__ds.concatenate(self.__ds.map(flip_left_right))
-            self.__ds=self.__ds.concatenate(self.__ds.map(central_crop))
+            self.__ds = self.__ds.concatenate(self.__ds.map(flip_up_down))
+            self.__ds = self.__ds.concatenate(self.__ds.map(random_brightness))
+            self.__ds = self.__ds.concatenate(self.__ds.map(flip_left_right))
+            # self.__ds = self.__ds.concatenate(self.__ds.map(central_crop))
         return self.__ds
 
     def __load_and_preprocess_from_path_label(self, path):
