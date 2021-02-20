@@ -25,7 +25,6 @@ def plot_shows(train_images, train_labels):
 
 
 def plot_shows_2(images, image_labels=None, figsize=(10, 10)):
-    print(len(images))
     plt.figure(figsize=figsize)
     for i in range(len(images)):
         plt.subplot(5, 5, i + 1)

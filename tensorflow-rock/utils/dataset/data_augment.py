@@ -76,8 +76,9 @@ class ImageAugment:
 
 
 if __name__ == '__main__':
+    jpg = "/WORK/datasset/flower_photos/train/daisy/99306615_739eb94b9e_m.jpg"
     images = ImageAugment(
-        "/WORK/datasset/flower_photos/train/daisy/99306615_739eb94b9e_m.jpg") \
+        jpg) \
         .flip_up_down() \
         .flip_left_right() \
         .central_crop() \
@@ -85,6 +86,7 @@ if __name__ == '__main__':
         .rot90() \
         .rot270() \
         .images()
-    for i in images:
-        print(i)
+    for index, image in enumerate(images):
+        print(image)
+        tf.keras.preprocessing.image.save_img(jpg + "_augment_" + str(index) + ".jpg", image, cmap="gray")
     plot_shows_2(images)
