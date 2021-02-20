@@ -33,13 +33,14 @@ def file_list(root_path):
     return __file_list(root_path, './*')
 
 
-def file_list_recursive(root_path):
-    return __file_list(root_path, './**/*')
+def file_list_recursive(root_path, file_type="*"):
+    return __file_list(root_path, './**/' + file_type)
 
 
-def __file_list(root_path, glob):
+def __file_list(root_path, pattern):
     if os.path.exists(root_path) is False:
         print("WARN: cannot find root path %s" % root_path)
+        return []
     root_path = pathlib.Path(root_path)
-    all_image_paths = list(root_path.glob(glob))
+    all_image_paths = list(root_path.glob(pattern))
     return [str(path) for path in all_image_paths]

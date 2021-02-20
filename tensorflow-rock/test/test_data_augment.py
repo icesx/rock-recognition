@@ -4,11 +4,11 @@
 # Contact: 12157724@qq.com
 # 2/19/21
 from utils.dataset.data_augment import ImageAugment
-from utils.my_file import file_list
+from utils.my_file import file_list_recursive
 
 
 def __do_augment(root):
-    for file in file_list(root):
+    for file in file_list_recursive(root, "*.jpg"):
         ImageAugment.auto(file).save()
 
 
