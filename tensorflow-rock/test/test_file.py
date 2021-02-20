@@ -10,13 +10,13 @@ from utils.my_file import *
 
 class TestFile(TestCase):
     def test_file_list(self):
-        ls = file_list("/WORK/datasset/mnist/test/0")
-        for f in ls:
+        for f in file_list("/WORK/datasset/mnist/test"):
+            print(f)
+
+    def test0_file_list_recursive(self):
+        for f in file_list_recursive("/WORK/datasset/mnist/test"):
             print(f)
 
 
 if __name__ == '__main__':
     unittest.main()
-    ls = file_list("/WORK/datasset/mnist/test/0")
-    for f in ls:
-        print(f)

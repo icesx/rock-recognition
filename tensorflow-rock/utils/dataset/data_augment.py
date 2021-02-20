@@ -74,6 +74,16 @@ class ImageAugment:
     def images(self):
         return self.__images
 
+    @staticmethod
+    def auto(root):
+        return (ImageAugment(root)
+                .flip_up_down()
+                .flip_left_right()
+                .central_crop()
+                .random_brightness()
+                .rot90()
+                .rot270())
+
     def save(self):
         for index, image in enumerate(self.__images):
             augment_image_path = self.__path + "_augment_" + str(index) + ".jpg"
@@ -83,14 +93,6 @@ class ImageAugment:
 
 if __name__ == '__main__':
     jpg = "/WORK/datasset/flower_photos/train/daisy/99306615_739eb94b9e_m.jpg"
-    ia = ImageAugment(jpg)
-    images = (ia
-              .flip_up_down()
-              .flip_left_right()
-              .central_crop()
-              .random_brightness()
-              .rot90()
-              .rot270()
-              .images())
+    ia = ImageAugment.auto(jpg)
     ia.save()
-    plot_shows(images)
+    plot_shows(ia.images())

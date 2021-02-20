@@ -2,9 +2,9 @@
 # Copyright (C)
 # Author: I
 # Contact: 12157724@qq.com
+import os
 import pathlib
 import shutil
-import os
 
 
 def write(file_path, file_content):
@@ -30,8 +30,16 @@ def mk_dir(dir):
 
 
 def file_list(root_path):
+    return __file_list(root_path, './*')
+
+
+def file_list_recursive(root_path):
+    return __file_list(root_path, './**/*')
+
+
+def __file_list(root_path, glob):
     if os.path.exists(root_path) is False:
         print("WARN: cannot find root path %s" % root_path)
     root_path = pathlib.Path(root_path)
-    all_image_paths = list(root_path.glob('./*'))
+    all_image_paths = list(root_path.glob(glob))
     return [str(path) for path in all_image_paths]
