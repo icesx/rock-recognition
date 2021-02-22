@@ -14,7 +14,7 @@ from utils.tf_board import tf_board
 class BaseModelOperate:
     def __init__(self, image_root, val_image_root, image_x, image_y, module_name=None):
         from utils.tf_gpu import gpu_init
-        gpu_init(5800)
+        gpu_init(6400)
         self.__model = None
         self.__ds = None
         self.__val_ds = None
@@ -147,26 +147,8 @@ class Flower102Model(BaseModelOperate):
 
     def _create(self, image_x, image_y):
         model = keras.Sequential([
-            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
-            keras.layers.MaxPool2D((2, 2)),
-            keras.layers.Conv2D(64, (2, 2), activation="relu"),
-            keras.layers.MaxPool2D((2, 2)),
-            keras.layers.Conv2D(64, (2, 2), activation="relu"),
-            keras.layers.Flatten(),
-            keras.layers.Dense(120, activation=tf.nn.relu),
-            keras.layers.Dense(102)
-        ])
-        return model
-
-
-class TFFlowerModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
-
-    def _create(self, image_x, image_y):
-        model = keras.Sequential([
-            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3),
-                                kernel_regularizer=keras.regularizers.l2(0.0001)),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            # kernel_regularizer=keras.regularizers.l2(0.0001)),
             keras.layers.MaxPool2D((2, 2)),
             # keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(96, (2, 2), activation="relu"),
@@ -181,7 +163,40 @@ class TFFlowerModel(BaseModelOperate):
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Flatten(),
+            keras.layers.Dense(256, activation=tf.nn.relu),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Dense(102)
+        ])
+        return model
+
+
+class TFFlowerModel(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_x, image_y):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+
+    def _create(self, image_x, image_y):
+        model = keras.Sequential([
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3),
+                                kernel_regularizer=keras.regularizers.l2(0.0001)),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(96, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(32, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(16, (2, 2), activation="relu",padding="same"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
