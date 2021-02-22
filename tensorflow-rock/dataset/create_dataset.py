@@ -8,13 +8,13 @@ class DatasetCreator:
         self.__image_y = image_y
         self.__ds = None
 
-    def load(self, root, augment=True):
-        return self.__create_dataset(root, augment)
+    def load(self, root, is_val=False):
+        return self.__create_dataset(root, is_val)
 
     def batch(self, batch):
         return self.__ds.batch(batch)
 
-    def repeat(self):
+    def shuffle_and_repeat(self):
         self.__ds = self.__ds.apply(tf.data.experimental.shuffle_and_repeat(buffer_size=1024))
         return self
 
@@ -30,15 +30,15 @@ class DatasetCreator:
     def __load_and_preprocess_from_path_label(self, path):
         return image_byte_array(path, self.__image_x, self.__image_y)
 
-    def __create_dataset(self, root, augment):
+    def __create_dataset(self, root, is_val):
         image_infos = image_labels(root)
         path_ds = tf.data.Dataset.from_tensor_slices([ii.path_str for ii in image_infos])
         image_ds = path_ds.map(self.__load_and_preprocess_from_path_label)
         label_ds = tf.data.Dataset.from_tensor_slices(
             tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
         self.__ds = tf.data.Dataset.zip((image_ds, label_ds))
-        self.__ds = self.augment(augment);
-        self.__ds = self.__ds.cache()
+        cache_name = "val" if is_val is True else "train"
+        self.__ds = self.__ds.cache(filename="../tmp/cache/tf-data-" + cache_name)
         return self
 
 

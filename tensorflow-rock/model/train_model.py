@@ -27,12 +27,12 @@ class BaseModelOperate:
 
     def load(self, batch=10):
         creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
-        self.__ds = creator.load(
-            self.__image_root).repeat().batch(batch)
+        val_creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
+        self.__ds = creator.load(self.__image_root).shuffle_and_repeat().batch(batch)
         if self.__val_image_root is None:
             raise Exception("please set test_image_root")
         else:
-            self.__val_ds = creator.load(self.__val_image_root, augment=False).batch(batch)
+            self.__val_ds = val_creator.load(self.__val_image_root, is_val=True).batch(batch)
         self.__write_labels()
         return self
 
@@ -196,7 +196,7 @@ class TFFlowerModel(BaseModelOperate):
             keras.layers.Conv2D(32, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
-            keras.layers.Conv2D(16, (2, 2), activation="relu",padding="same"),
+            keras.layers.Conv2D(16, (2, 2), activation="relu", padding="same"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
