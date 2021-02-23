@@ -8,7 +8,9 @@ from tensorflow import keras
 
 from dataset.create_dataset import DatasetCreator
 from dataset.image_file import ALL_LABELS
-from utils.tf_board import tf_board
+from utils import tf_board
+
+tf.keras.backend.clear_session()
 
 
 class BaseModelOperate:
@@ -62,7 +64,8 @@ class BaseModelOperate:
                   epochs=epochs,
                   steps_per_epoch=steps_per_epoch,
                   validation_data=test_dataset,
-                  callbacks=[tf_board(self.__class__.__name__)])
+                  callbacks=[tf_board.tb.tf_board_instance(self.__class__.__name__)]
+                  )
 
     def compile(self, model):
         model.compile(optimizer="adam",
@@ -193,6 +196,9 @@ class TFFlowerModel(BaseModelOperate):
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(32, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
@@ -200,8 +206,8 @@ class TFFlowerModel(BaseModelOperate):
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
-            keras.layers.Dense(512, activation=tf.nn.relu),
-            keras.layers.Dense(256, activation=tf.nn.relu),
+            keras.layers.Dense(128, activation=tf.nn.relu),
+            keras.layers.Dense(64, activation=tf.nn.relu),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Dense(5)
         ])

@@ -6,5 +6,5 @@ if __name__ == '__main__':
                   image_y=212) \
         .load(batch=50) \
         .train(steps_per_epoch=400,
-               epochs=80) \
+               epochs=30) \
         .save("../save/model/star")

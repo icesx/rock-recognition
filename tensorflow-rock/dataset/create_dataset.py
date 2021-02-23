@@ -38,7 +38,7 @@ class DatasetCreator:
             tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
         self.__ds = tf.data.Dataset.zip((image_ds, label_ds))
         cache_name = "val" if is_val is True else "train"
-        self.__ds = self.__ds.cache(filename="../tmp/cache/tf-data-" + cache_name)
+        self.__ds = self.__ds.cache()
         return self
 
 
