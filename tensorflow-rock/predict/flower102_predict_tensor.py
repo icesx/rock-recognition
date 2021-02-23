@@ -9,7 +9,7 @@ from utils.my_file import file_list, file_list_recursive
 
 if __name__ == '__main__':
     pm = PredictModel("../save/model/flowers102")
-    files=file_list_recursive("/WORK/datasset/102flowers/val/80")
+    files=file_list_recursive("/WORK/datasset/102flowers/val/102")
     for i in files:
         result = pm.predict(i, 256, 256)
         for re in result:
