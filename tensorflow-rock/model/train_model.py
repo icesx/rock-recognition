@@ -280,9 +280,9 @@ class IDCardModel(BaseModelOperate):
             keras.layers.Conv2D(384, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
             keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
-            keras.layers.Dense(1024, activation='relu'),
-            keras.layers.Dropout(rate=0.3),
-            keras.layers.Dense(10, activation='softmax')
+            keras.layers.Dense(10 * 18),
+            keras.layers.Reshape([10, 18]),
+            keras.layers.Softmax()
         ])
 
 
