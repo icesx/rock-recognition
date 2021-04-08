@@ -14,7 +14,7 @@ tf.keras.backend.clear_session()
 
 
 class BaseModelOperate:
-    def __init__(self, image_root, val_image_root, image_x, image_y, module_name=None):
+    def __init__(self, image_root, val_image_root, image_y, image_x, module_name=None):
         from utils.tf_gpu import gpu_init
         gpu_init(6400)
         self.__model = None
@@ -28,8 +28,8 @@ class BaseModelOperate:
         self.__val_image_root = val_image_root
 
     def load(self, batch=10):
-        creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
-        val_creator = DatasetCreator(image_x=self.__image_x, image_y=self.__image_y)
+        creator = DatasetCreator(image_y=self.__image_y, image_x=self.__image_x)
+        val_creator = DatasetCreator(image_y=self.__image_y, image_x=self.__image_x)
         self.__ds = creator.load(self.__image_root).shuffle_and_repeat().batch(batch)
         if self.__val_image_root is None:
             raise Exception("please set test_image_root")
@@ -43,11 +43,11 @@ class BaseModelOperate:
             for label in ALL_LABELS.items():
                 file.write(label[0] + "," + str(label[1].label_idx) + "\r\n")
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         return None
 
     def train(self, steps_per_epoch, epochs=100):
-        self.__model = self._create(self.__image_x, self.__image_y)
+        self.__model = self._create(self.__image_y, self.__image_x)
         if self.__model is None:
             print("please overrider _train()")
         else:
@@ -74,12 +74,12 @@ class BaseModelOperate:
 
 
 class RockModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_y, image_x):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_y, image_x, 3)),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
@@ -97,18 +97,30 @@ class RockModel(BaseModelOperate):
 
 
 class StarModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_y, image_x):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(240, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_y, image_x, 3),
+                                kernel_regularizer=keras.regularizers.l2(0.0001)),
             keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(96, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
             keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Conv2D(64, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(32, (2, 2), activation="relu"),
+            keras.layers.MaxPool2D((2, 2)),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Flatten(),
-            keras.layers.Dense(120, activation=tf.nn.relu),
+            keras.layers.Dense(64, activation=tf.nn.relu),
+            keras.layers.Dropout(rate=0.2),
             keras.layers.Dense(10)
         ])
         return model
@@ -116,11 +128,11 @@ class StarModel(BaseModelOperate):
 
 class BirdModel(BaseModelOperate):
     def __init__(self, image_root, val_image_root, image_x=112, image_y=112):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_y, image_x, 3)),
             # kernel_regularizer=keras.regularizers.l2(0.0001)),
             keras.layers.MaxPool2D((2, 2)),
             # keras.layers.Dropout(rate=0.2),
@@ -145,12 +157,12 @@ class BirdModel(BaseModelOperate):
 
 
 class Flower102Model(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_y, image_x):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_y, image_x, 3)),
             # kernel_regularizer=keras.regularizers.l2(0.0001)),
             keras.layers.MaxPool2D((2, 2)),
             # keras.layers.Dropout(rate=0.2),
@@ -181,12 +193,12 @@ class Flower102Model(BaseModelOperate):
 
 
 class TFFlowerModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x, image_y):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+    def __init__(self, image_root, val_image_root, image_y, image_x):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_x, image_y, 3),
+            keras.layers.Conv2D(128, (2, 2), activation="relu", input_shape=(image_y, image_x, 3),
                                 kernel_regularizer=keras.regularizers.l2(0.0001)),
             keras.layers.MaxPool2D((2, 2)),
             keras.layers.Dropout(rate=0.2),
@@ -216,15 +228,15 @@ class TFFlowerModel(BaseModelOperate):
 
 class Cifar10(BaseModelOperate):
     def __init__(self, image_root, val_image_root, image_x=32, image_y=32):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y)
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
         regularizer = keras.regularizers.l2(0.00001)
         return keras.Sequential([
             keras.layers.Conv2D(filters=32,
                                 kernel_size=(3, 3),
                                 activation='relu',
-                                input_shape=(image_x, image_y, 3),
+                                input_shape=(image_y, image_x, 3),
                                 kernel_regularizer=regularizer,
                                 padding='same'),
             keras.layers.Dropout(rate=0.1),
@@ -245,13 +257,42 @@ class Cifar10(BaseModelOperate):
         ])
 
 
-class Mnist(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_x=28, image_y=28, module_name="mnist"):
-        BaseModelOperate.__init__(self, image_root, val_image_root, image_x, image_y, module_name)
+class IDCardModel(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_y=32, image_x=32):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
-    def _create(self, image_x, image_y):
+    def _create(self, image_y, image_x):
+        regularizer = keras.regularizers.l2(0.00001)
+        return keras.Sequential([
+            keras.layers.Conv2D(filters=32,
+                                kernel_size=(3, 3),
+                                activation='relu',
+                                input_shape=(image_y, image_x, 3),
+                                kernel_regularizer=regularizer,
+                                padding='same'),
+            keras.layers.Dropout(rate=0.1),
+            keras.layers.MaxPooling2D((3, 3)),
+            keras.layers.Conv2D(96, (3, 3), activation='relu', kernel_regularizer=regularizer, ),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.MaxPooling2D((2, 2)),
+            keras.layers.Conv2D(384, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.Dropout(rate=0.2),
+            keras.layers.Flatten(),
+            keras.layers.Dense(1024, activation='relu'),
+            keras.layers.Dropout(rate=0.3),
+            keras.layers.Dense(10, activation='softmax')
+        ])
+
+
+class Mnist(BaseModelOperate):
+    def __init__(self, image_root, val_image_root, image_y=28, image_x=28, module_name="mnist"):
+        BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x, module_name)
+
+    def _create(self, image_y, image_x):
         model = keras.Sequential([
-            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_x, image_y, 3)),
+            keras.layers.Conv2D(120, (2, 2), activation="relu", input_shape=(image_y, image_x, 3)),
             keras.layers.Flatten(input_shape=(28, 28)),
             keras.layers.Dense(120, activation=tf.nn.relu),
             keras.layers.Dense(10)
@@ -260,5 +301,5 @@ class Mnist(BaseModelOperate):
 
 
 class FashionMnist(Mnist):
-    def __init__(self, image_root, val_image_root, image_x=28, image_y=28):
-        Mnist.__init__(self, image_root, val_image_root, image_x, image_y, module_name="fashion_mnist")
+    def __init__(self, image_root, val_image_root, image_y=28, image_x=28):
+        Mnist.__init__(self, image_root, val_image_root, image_y, image_x, module_name="fashion_mnist")

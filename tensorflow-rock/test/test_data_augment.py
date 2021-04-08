@@ -20,5 +20,9 @@ def augment_102flowers():
     __do_augment("/WORK/datasset/102flowers/train")
 
 
+def augment_star():
+    __do_augment("/WORK/datasset/star_imgs/train")
+
+
 if __name__ == '__main__':
-    augment_102flowers()
+    augment_star()

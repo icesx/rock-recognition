@@ -3,7 +3,7 @@ from dataset.image_file import *
 
 class DatasetCreator:
 
-    def __init__(self, image_x=64, image_y=64):
+    def __init__(self, image_y=64, image_x=64):
         self.__image_x = image_x
         self.__image_y = image_y
         self.__ds = None
@@ -28,7 +28,7 @@ class DatasetCreator:
         return self.__ds
 
     def __load_and_preprocess_from_path_label(self, path):
-        return image_byte_array(path, self.__image_x, self.__image_y)
+        return image_byte_array(path, self.__image_y, self.__image_x)
 
     def __create_dataset(self, root, is_val):
         image_infos = image_labels(root)

@@ -32,5 +32,12 @@ def save_tf_flowers():
                    test_root="/WORK/datasset/flower_photos/val")
 
 
+def save_id_card():
+    random_dataset(train_ratio=0.9,
+                   root="/WORK/datasset/id_card/all",
+                   train_root="/WORK/datasset/id_card/train",
+                   test_root="/WORK/datasset/id_card/val")
+
+
 if __name__ == '__main__':
-    save_tf_flowers()
+    save_id_card()
