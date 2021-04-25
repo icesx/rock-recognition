@@ -3,13 +3,13 @@ from dataset.image_file import *
 
 class DatasetCreator:
 
-    def __init__(self, image_y=64, image_x=64):
+    def __init__(self, image_y, image_x):
         self.__image_x = image_x
         self.__image_y = image_y
         self.__ds = None
 
-    def load(self, root, is_val=False):
-        return self.__create_dataset(root, is_val)
+    def load(self, root, func_label, label_type):
+        return self.__create_dataset(root, func_label, label_type)
 
     def batch(self, batch):
         return self.__ds.batch(batch)
@@ -30,14 +30,16 @@ class DatasetCreator:
     def __load_and_preprocess_from_path_label(self, path):
         return image_byte_array(path, self.__image_y, self.__image_x)
 
-    def __create_dataset(self, root, is_val):
+    def __create_dataset(self, root, func_label, label_type):
         image_infos = image_labels(root)
         path_ds = tf.data.Dataset.from_tensor_slices([ii.path_str for ii in image_infos])
         image_ds = path_ds.map(self.__load_and_preprocess_from_path_label)
         label_ds = tf.data.Dataset.from_tensor_slices(
-            tf.cast([ii.label_info.label_idx for ii in image_infos], tf.int64))
+            tf.cast([func_label(ii) for ii in image_infos], label_type))
         self.__ds = tf.data.Dataset.zip((image_ds, label_ds))
-        cache_name = "val" if is_val is True else "train"
+        return self
+
+    def cache(self):
         self.__ds = self.__ds.cache()
         return self
 

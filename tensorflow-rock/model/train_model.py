@@ -27,14 +27,20 @@ class BaseModelOperate:
         self.__image_root = image_root
         self.__val_image_root = val_image_root
 
-    def load(self, batch=10):
+    def plot(self):
+        sample = self.__ds.take(10)
+        print(sample)
+        return self
+        # plot_shows(image_ds, label_ds)
+
+    def load(self, batch=10, func_label=lambda ii: ii.label_info.label_idx, label_type=tf.int64):
         creator = DatasetCreator(image_y=self.__image_y, image_x=self.__image_x)
         val_creator = DatasetCreator(image_y=self.__image_y, image_x=self.__image_x)
-        self.__ds = creator.load(self.__image_root).shuffle_and_repeat().batch(batch)
+        self.__ds = creator.load(self.__image_root, func_label, label_type).shuffle_and_repeat().batch(batch)
         if self.__val_image_root is None:
             raise Exception("please set test_image_root")
         else:
-            self.__val_ds = val_creator.load(self.__val_image_root, is_val=True).batch(batch)
+            self.__val_ds = val_creator.load(self.__val_image_root, func_label, label_type).batch(batch)
         self.__write_labels()
         return self
 
@@ -258,7 +264,7 @@ class Cifar10(BaseModelOperate):
 
 
 class IDCardModel(BaseModelOperate):
-    def __init__(self, image_root, val_image_root, image_y=32, image_x=32):
+    def __init__(self, image_root, val_image_root, image_y, image_x):
         BaseModelOperate.__init__(self, image_root, val_image_root, image_y, image_x)
 
     def _create(self, image_y, image_x):
@@ -268,17 +274,14 @@ class IDCardModel(BaseModelOperate):
                                 kernel_size=(3, 3),
                                 activation='relu',
                                 input_shape=(image_y, image_x, 3),
-                                kernel_regularizer=regularizer,
-                                padding='same'),
-            keras.layers.Dropout(rate=0.1),
+                                ),
             keras.layers.MaxPooling2D((3, 3)),
-            keras.layers.Conv2D(96, (3, 3), activation='relu', kernel_regularizer=regularizer, ),
-            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(64, (3, 3), activation='relu'),
             keras.layers.MaxPooling2D((2, 2)),
-            keras.layers.Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
+            keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same', ),
             keras.layers.MaxPooling2D((2, 2)),
-            keras.layers.Conv2D(384, (3, 3), activation='relu', padding='same', kernel_regularizer=regularizer, ),
-            keras.layers.Dropout(rate=0.2),
+            keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same', ),
+            keras.layers.MaxPooling2D((2, 2)),
             keras.layers.Flatten(),
             keras.layers.Dense(10 * 18),
             keras.layers.Reshape([10, 18]),
